@@ -1,0 +1,32 @@
+=== Data Profile ===
+
+1. Shape (rows, columns): (2000, 10)
+
+2. Data Types:
+student_id                str
+department                str
+semester                  str
+course_load             int64
+study_hours_weekly    float64
+gpa                   float64
+attendance_pct        float64
+has_internship            str
+commute_minutes       float64
+scholarship               str
+
+3. Missing Values (Count and Percentage):
+                    Count  Percentage %
+student_id              0          0.00
+department              0          0.00
+semester                0          0.00
+course_load             0          0.00
+study_hours_weekly      0          0.00
+gpa                     0          0.00
+attendance_pct          0          0.00
+has_internship          0          0.00
+commute_minutes       181          9.05
+scholarship           389         19.45
+
+4. Handling Decisions:
+- commute_minutes: Imputed with the median. Reasoning: It's a numerical variable with ~10% missing (MCAR), and median is robust to outliers.
+- study_hours_weekly: Dropped rows with missing values. Reasoning: It represents ~5% (MCAR), dropping them won't significantly impact the large sample size.
