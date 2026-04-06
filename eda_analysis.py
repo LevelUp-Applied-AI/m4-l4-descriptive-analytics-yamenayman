@@ -124,7 +124,7 @@ import seaborn as sns
 from scipy import stats
 import os
 
-# Create output directory if it doesn't exist
+
 os.makedirs('output', exist_ok=True)
 
 def task1_inspect_and_clean(df):
@@ -148,17 +148,16 @@ def task1_inspect_and_clean(df):
         f.write("- study_hours_weekly: Dropped rows with missing values. Reasoning: It represents ~5% (MCAR), dropping them won't significantly impact the large sample size.\n")
         
     # Cleaning
-    # 1. Fill commute_minutes with median
     df['commute_minutes'] = df['commute_minutes'].fillna(df['commute_minutes'].median())
     
-    # 2. Drop rows where study_hours_weekly is missing
     df_cleaned = df.dropna(subset=['study_hours_weekly'])
     
+    df_cleaned['scholarship'] = df_cleaned['scholarship'].fillna('None')
     return df_cleaned
 
 def task2_distributions(df):
     """Task 2: Distribution Analysis"""
-    # 1. Histograms with KDE for continuous variables
+
     cols_to_plot = ['gpa', 'study_hours_weekly', 'attendance_pct']
     for col in cols_to_plot:
         plt.figure(figsize=(8, 5))
@@ -167,7 +166,7 @@ def task2_distributions(df):
         plt.savefig(f'output/dist_{col}.png')
         plt.close()
 
-    # 2. Box plot comparing gpa across department
+
     plt.figure(figsize=(10, 6))
     sns.boxplot(x='department', y='gpa', data=df)
     plt.title('GPA Distribution across Departments')
@@ -176,7 +175,7 @@ def task2_distributions(df):
     plt.savefig('output/gpa_by_department.png')
     plt.close()
 
-    # 3. Bar chart for categorical variable (scholarship)
+
     plt.figure(figsize=(8, 5))
     sns.countplot(x='scholarship', data=df, palette='viridis')
     plt.title('Distribution of Scholarship Types')
@@ -185,13 +184,13 @@ def task2_distributions(df):
 
 def task3_correlation(df):
     """Task 3: Correlation Analysis"""
-    # Select only numeric columns
+
     numeric_df = df.select_dtypes(include=[np.number])
     
-    # 1. Correlation Matrix
+
     corr_matrix = numeric_df.corr()
     
-    # 2. Heatmap
+
     plt.figure(figsize=(10, 8))
     sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f")
     plt.title('Correlation Matrix Heatmap')
@@ -199,7 +198,7 @@ def task3_correlation(df):
     plt.savefig('output/correlation_heatmap.png')
     plt.close()
 
-    # 3. Scatter plot for the two most correlated variables (study_hours_weekly and gpa based on prompt hints)
+
     plt.figure(figsize=(8, 5))
     sns.scatterplot(x='study_hours_weekly', y='gpa', data=df, alpha=0.5)
     plt.title('Scatter Plot: Study Hours vs GPA')
@@ -212,13 +211,13 @@ def task4_hypothesis_testing(df):
     print("TASK 4: HYPOTHESIS TESTING RESULTS")
     print("="*40)
     
-    # Hypothesis 1: Internships and GPA
+
     interns = df[df['has_internship'] == 'Yes']['gpa'].dropna()
     non_interns = df[df['has_internship'] == 'No']['gpa'].dropna()
     
     t_stat, p_val_t = stats.ttest_ind(interns, non_interns, equal_var=False)
     
-    # Calculate Cohen's d
+
     n1, n2 = len(interns), len(non_interns)
     var1, var2 = interns.var(), non_interns.var()
     pooled_var = ((n1 - 1) * var1 + (n2 - 1) * var2) / (n1 + n2 - 2)
@@ -233,7 +232,7 @@ def task4_hypothesis_testing(df):
     else:
         print("Interpretation: There is NO statistically significant difference in GPA.")
 
-    # Hypothesis 2: Scholarship and Department
+
     print("\n--- Hypothesis 2 ---")
     print("H2: Scholarship status is associated with department.")
     contingency_table = pd.crosstab(df['scholarship'], df['department'])
@@ -247,10 +246,10 @@ def task4_hypothesis_testing(df):
     print("="*40 + "\n")
 
 def main():
-    # Load dataset
+
     df = pd.read_csv('data/student_performance.csv')
     
-    # Run Tasks
+
     df_clean = task1_inspect_and_clean(df)
     task2_distributions(df_clean)
     task3_correlation(df_clean)
